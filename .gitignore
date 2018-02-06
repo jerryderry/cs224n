@@ -1,0 +1,9 @@
+.DS_Store
+*.log
+*.pyc
+assignment1/.idea/
+*.aux
+*.npy
+*.ipynb
+*.gz
+assignment1/utils/datasets/

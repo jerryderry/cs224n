@@ -1,0 +1,110 @@
+\documentclass[twoside]{article}
+\usepackage{xltxtra,fontspec,xunicode}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{amssymb, amsmath}
+\usepackage{bm}
+
+
+\begin{document}
+	2. (b)
+	
+	\begin{align*}
+		J &= -\sum_{i=1}^{V}y_i \ln\hat{y}_i = -\left\{\bm{y}\right\}^\mathsf{T}\ln(\mathrm{softmax}(\left\{\bm{\theta}\right\}))\\
+		&= -\left<\bm{y}\right>\left(\left\{\bm{\theta}\right\}-\ln\sum_{i=1}^{V}\mathrm{e}^{\theta_i}\right).
+	\end{align*}
+	\begin{align*}
+		\frac{\partial J}{\partial\left<\bm{\theta}\right>} &= -\left<\bm{y}\right>\left(\left[\bm{I}\right]-\frac{1}{\sum\mathrm{e}^{\theta_i}}\cdot\sum_{i=1}^{V}\frac{\partial\mathrm{e}^{\theta_i}}{\partial\left<\bm{\theta}\right>}\right)\\
+		&= -\left<\bm{y}\right>\left(\left[\bm{I}\right]-\frac{\mathrm{e}^{\left<\bm{\theta}\right>}}{\sum\mathrm{e}^{\theta_i}}\right)\\
+		&= -\left<\bm{y}\right>\left(\left[\bm{I}\right]-\left<\bm{\hat{y}}\right>\right)\\
+		&= \left<\bm{\hat{y}}\right> - \left<\bm{y}\right>.
+	\end{align*}
+	
+	3. (a)
+	
+	\begin{align*}
+		\frac{\partial J}{\partial\left<\bm{v}_c\right>} &= \frac{\partial J}{\partial\left<\bm{\theta}\right>}\frac{\partial\left\{\bm{\theta}\right\}}{\partial\left<\bm{v}_c\right>}\\
+		&=\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)\frac{\partial\left\{\bm{\theta}\right\}}{\partial\left<\bm{v}_c\right>}.
+	\end{align*}
+	
+	Since
+	\begin{equation*}
+		\left\{\bm{\theta}\right\} = \left\{
+		\begin{matrix}
+		\left<\bm{u}_1\right>\left\{\bm{v}_c\right\}\\
+		\left<\bm{u}_2\right>\left\{\bm{v}_c\right\}\\
+		\vdots\\
+		\left<\bm{u}_V\right>\left\{\bm{v}_c\right\}\\
+		\end{matrix}\right\} = \left[
+		\begin{matrix}
+		\left\{\bm{u}_1\right\} & \left\{\bm{u}_2\right\} & \cdots & \left\{\bm{u}_V\right\}
+		\end{matrix}\right]^\mathsf{T}\left\{\bm{v}_c\right\},
+	\end{equation*}
+	\noindent therefore,
+	\begin{align*}
+		\frac{\partial J}{\partial\left<\bm{v}_c\right>} &= \left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)\left[\bm{U}\right]^\mathsf{T}.\\
+		\frac{\partial J}{\partial\left\{\bm{v}_c\right\}} &= \left[\bm{U}\right]\left(\left\{\bm{\hat{y}}\right\} - \left\{\bm{y}\right\}\right).
+	\end{align*}
+	
+	3. (b)
+	
+	\begin{align*}
+		\frac{\partial J}{\partial\left[\bm{U}\right]} &= \left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)\frac{\partial\left\{\bm{\theta}\right\}}{\partial\left[\bm{U}\right]}\\
+		&= \left[
+		\begin{matrix}
+		\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)\left[
+		\begin{matrix}
+		\frac{\partial\left\{\bm{u}_1\right\}^\mathsf{T}\left\{\bm{v}_c\right\}}{\partial\left<\bm{u}_1\right>}\\
+		\vdots\\
+		\frac{\partial\left\{\bm{u}_1\right\}^\mathsf{T}\left\{\bm{v}_c\right\}}{\partial\left<\bm{u}_V\right>}
+		\end{matrix}\right]\\
+		\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)\left[
+		\begin{matrix}
+		\frac{\partial\left\{\bm{u}_2\right\}^\mathsf{T}\left\{\bm{v}_c\right\}}{\partial\left<\bm{u}_1\right>}\\
+		\vdots\\
+		\frac{\partial\left\{\bm{u}_2\right\}^\mathsf{T}\left\{\bm{v}_c\right\}}{\partial\left<\bm{u}_V\right>}
+		\end{matrix}\right]\\
+		\vdots\\
+		\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)\left[
+		\begin{matrix}
+		\frac{\partial\left\{\bm{u}_V\right\}^\mathsf{T}\left\{\bm{v}_c\right\}}{\partial\left<\bm{u}_1\right>}\\
+		\vdots\\
+		\frac{\partial\left\{\bm{u}_V\right\}^\mathsf{T}\left\{\bm{v}_c\right\}}{\partial\left<\bm{u}_V\right>}
+		\end{matrix}\right]
+		\end{matrix}\right]\\
+		&= \left[
+		\begin{matrix}
+		\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)\left[
+		\begin{matrix}
+		\left<\bm{v}_c\right>\\
+		\left<\bm{0}\right>\\
+		\vdots\\
+		\left<\bm{0}\right>
+		\end{matrix}\right]\\
+		\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)\left[
+		\begin{matrix}
+		\left<\bm{0}\right>\\
+		\left<\bm{v}_c\right>\\
+		\vdots\\
+		\left<\bm{0}\right>
+		\end{matrix}\right]\\
+		\vdots\\
+		\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)\left[
+		\begin{matrix}
+		\left<\bm{0}\right>\\
+		\vdots\\
+		\left<\bm{v}_c\right>
+		\end{matrix}\right]
+		\end{matrix}\right]\\
+		&= \left[
+		\begin{matrix}
+		\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)_{*1} \cdot \left<\bm{v}_c\right>\\
+		\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)_{*2} \cdot \left<\bm{v}_c\right>\\
+		\vdots\\
+		\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right)_{*V} \cdot \left<\bm{v}_c\right>
+		\end{matrix}\right]\\
+		&= \left\{\bm{v}_c\right\}\left(\left<\bm{\hat{y}\right>}-\left<\bm{y}\right>\right).
+	\end{align*}
+\end{document}
