@@ -59,13 +59,13 @@ def softmaxCostAndGradient(predicted, target, outputVectors, dataset):
     """
 
     ### YOUR CODE HERE
-    theta = np.sum(outputVectors * predicted, axis=1, keepdims=True)      # V by 1
+    theta = outputVectors.dot(predicted)      # V by 1
     y_hat = softmax(theta)   # V by 1
     cost = -np.log(y_hat[target])
 
     y_hat[target] -= 1.0
-    gradPred = np.matmul(y_hat.T, outputVectors)   # 1 by d
-    grad = np.matmul(y_hat, predicted)             # V by d
+    gradPred = y_hat.dot(outputVectors)   # 1 by d
+    grad = np.outer(y_hat, predicted)             # V by d
     ### END YOUR CODE
 
     return cost, gradPred, grad
@@ -113,14 +113,14 @@ def negSamplingCostAndGradient(predicted, target, outputVectors, dataset,
 
     ### YOUR CODE HERE
     indices = indices[1:]
-    so = sigmoid(np.dot(outputVectors[target, None], predicted.T))  # 1 by 1
-    sk = sigmoid(-np.dot(outputVectors[indices], predicted.T)) # k by 1
+    so = sigmoid(np.dot(outputVectors[target], predicted))  # 1 by 1
+    sk = sigmoid(-outputVectors[indices].dot(predicted)) # k by 1
     cost = -np.log(so) - np.sum(np.log(sk))
 
-    gradPred = (so-1) * outputVectors[target, None] - np.matmul((sk-1).T, outputVectors[indices])         # 1 by d
+    gradPred = (so-1) * outputVectors[target] - (sk-1).dot(outputVectors[indices])        # 1 by d
     grad = np.zeros(outputVectors.shape)
-    np.add.at(grad, indices, -(sk-1) * np.tile(predicted[0], (K, 1)))
-    grad[target, None] += (so - 1) * predicted
+    np.add.at(grad, indices, -(sk.reshape(-1, 1)-1) * np.tile(predicted, (K, 1)))
+    grad[target] += (so - 1) * predicted
     ### END YOUR CODE
 
     return cost, gradPred, grad
@@ -157,13 +157,13 @@ def skipgram(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
 
     ### YOUR CODE HERE
     current_word_index = tokens[currentWord]
-    current_word_vector = inputVectors[current_word_index, None]   # 1 by d
+    current_word_vector = inputVectors[current_word_index]   # 1 by d
     for context_word in contextWords:
         context_word_index = tokens[context_word]
 
         cost_local, grad_current, grad_context = word2vecCostAndGradient(current_word_vector, context_word_index, outputVectors, dataset)
         cost += cost_local
-        gradIn[current_word_index,None] += grad_current
+        gradIn[current_word_index] += grad_current
         gradOut += grad_context
     ### END YOUR CODE
 
@@ -190,10 +190,10 @@ def cbow(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
     ### YOUR CODE HERE
     # In CBOW, the sum of all the [V] context word vectors are used as
     # the center word vector
-    center_word_vector = np.zeros((1, inputVectors.shape[1]))
+    center_word_vector = np.zeros(inputVectors.shape[1])
     current_word_index = tokens[currentWord]
     for context_word in contextWords:
-        center_word_vector += inputVectors[tokens[context_word], None]
+        center_word_vector += inputVectors[tokens[context_word]]
 
     # The [U] center word vector is used as context word vector
     cost, grad_current, gradOut = word2vecCostAndGradient(center_word_vector, current_word_index,
@@ -202,7 +202,7 @@ def cbow(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
     # Since context words can be repeated, corresponding rows should be updated,
     # instead of directly assigned
     for context_word in contextWords:
-        gradIn[tokens[context_word], None] += grad_current
+        gradIn[tokens[context_word]] += grad_current
     ### END YOUR CODE
 
     return cost, gradIn, gradOut
