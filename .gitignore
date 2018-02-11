@@ -1,9 +1,11 @@
 .DS_Store
 *.log
 *.pyc
-assignment1/.idea/
+assignment*/.idea/
 *.aux
 *.npy
 *.ipynb
 *.gz
 assignment1/utils/datasets/
+assignment2/metastore_db/
+assignment2/data/
