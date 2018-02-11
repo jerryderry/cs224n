@@ -1,0 +1,33 @@
+\documentclass[twoside]{article}
+\usepackage{xltxtra,fontspec,xunicode}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{amssymb, amsmath}
+\usepackage{bm}
+
+\begin{document}
+	2. (a)
+	
+	\scalebox{0.7}{
+		\begin{tabular}{l|l|l|l}
+			stack & buffer & new dependency & transition \\
+			\hline 
+			{[}ROOT{]} & {[}I, parsed, this, sentence, correctly{]} &  & Initial Configuration \\ 
+			{[}ROOT, I{]} & {[}parsed, this, sentence, correctly{]} &  & SHIFT \\ 
+			{[}ROOT, I, parsed{]} & {[}this, sentence, correctly{]} &  & SHIFT \\ 
+			{[}ROOT, parsed{]} & {[}this, sentence, correctly{]} & parsed \textrightarrow I & LEFT-ARC \\ 
+			{[}ROOT, parsed, this{]} & {[}sentence, correctly{]} &  & SHIFT \\ 
+			{[}ROOT, parsed, this, sentence{]} & {[}correctly{]} &  & SHIFT \\ 
+			{[}ROOT, parsed, sentence{]} & {[}correctly{]} & sentence \textrightarrow this & LEFT-ARC \\ 
+			{[}ROOT, parsed{]} & {[}correctly{]} & parsed \textrightarrow sentence & RIGHT-ARC \\ 
+			{[}ROOT, parsed, correctly{]} & {[}{]} &  & SHIFT \\
+			{[}ROOT, parsed{]} & {[}{]} & parsed \textrightarrow correctly & RIGHT-ARC \\
+			{[}ROOT{]} & {[}{]} & ROOT \textrightarrow parsed & RIGHT-ARC \\
+			\hline
+		\end{tabular} 
+	}
+
+2. (b) A sentence containing $n$ words will be parsed in $2n$ steps, because each word needs to be pushed into the stack, which needs $n$ steps, and then popped out of the stack until only ROOT is in the stack, which needs another $n$ steps.
+\end{document}
