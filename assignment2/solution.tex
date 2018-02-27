@@ -30,4 +30,197 @@
 	}
 
 2. (b) A sentence containing $n$ words will be parsed in $2n$ steps, because each word needs to be pushed into the stack, which needs $n$ steps, and then popped out of the stack until only ROOT is in the stack, which needs another $n$ steps.
+
+3. (a) (i) To answer this question, we need to take into consideration that only one element of $\left\{\bm{y}\right\}$ is 1, and others 0. Assume that the $i$th element is 1. Then for the cross-entroy, we have
+
+\begin{equation*}
+	J = -y_i\ln\hat{y}_i = -\ln\hat{y}_i.
+\end{equation*}
+\noindent Correspondingly, the expression for the perplexity becomes
+\begin{equation*}
+	PP = \frac{1}{\hat{y}_i}.
+\end{equation*}
+\noindent Therefore,
+\begin{equation*}
+	\mathrm{e}^J = \mathrm{e}^{-\ln\hat{y}_i} = \mathrm{e}^{\ln\hat{y}_i^{-1}}=\frac{1}{\hat{y}_i} = PP.
+\end{equation*}
+
+3. (a) (ii) Apply logarithm to the geometric mean perplexity:
+
+\begin{align*}
+	\ln\left(\prod_{t=1}^{T}PP^{(t)}\right)^{1/T} &= \frac{1}{T}\left(\ln PP^{(1)} + \ln PP^{(2)} + \cdots + \ln PP^{(T)})\right)\\
+	&= \frac{1}{T}\left(J^{(1)} + J^{(2)} + \cdots + J^{(T)}\right) = \frac{1}{T}\sum_{t=1}^{T}J^{(t)}.
+\end{align*}
+
+Since the logarithm function is an increasing one, minimizing the geometric mean perplexity is equivalent to minimizing the arithmetic mean cross-entropy loss.
+
+3. (a) (iii) At any step, the probability of the model predicting the correct word is $\frac{1}{\left|V\right|}$. So the perplexity is $\left|V\right|=100000$. The cross-entropy loss is $\ln\left|V\right| =4\ln 10\approx 9.21$.
+
+3. (b) We already know that $\frac{\partial J}{\partial\left\{\bm{\theta}^{(t)}\right\}} = \left\{\bm{\hat{y}^{(t)}}\right\}-\left\{\bm{y}^{(t)}\right\}$, therefore
+	
+	\begin{align*}
+	\frac{\partial J^{(t)}}{\partial\left[\bm{U}\right]} &= \left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\frac{\partial\left\{\bm{\theta}\right\}}{\partial\left[\bm{U}\right]}\\
+	&= \left[
+	\begin{matrix}
+	\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\left[
+	\begin{matrix}
+	\frac{\partial\theta_1}{\partial\left<\bm{u}_1\right>}\\
+	\vdots\\
+	\frac{\partial\theta_1}{\partial\left<\bm{u}_V\right>}
+	\end{matrix}\right]\\
+	\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\left[
+	\begin{matrix}
+	\frac{\partial\theta_2}{\partial\left<\bm{u}_1\right>}\\
+	\vdots\\
+	\frac{\partial\theta_2}{\partial\left<\bm{u}_V\right>}
+	\end{matrix}\right]\\
+	\vdots\\
+	\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\left[
+	\begin{matrix}
+	\frac{\partial\theta_V}{\partial\left<\bm{u}_1\right>}\\
+	\vdots\\
+	\frac{\partial\theta_V}{\partial\left<\bm{u}_V\right>}
+	\end{matrix}\right]
+	\end{matrix}\right]\\
+	&= \left[
+	\begin{matrix}
+	\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\left[
+	\begin{matrix}
+	\left<\bm{h}^{(t)}\right>\\
+	\left<\bm{0}\right>\\
+	\vdots\\
+	\left<\bm{0}\right>
+	\end{matrix}\right]\\
+	\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\left[
+	\begin{matrix}
+	\left<\bm{0}\right>\\
+	\left<\bm{h}^{(t)}\right>\\
+	\vdots\\
+	\left<\bm{0}\right>
+	\end{matrix}\right]\\
+	\vdots\\
+	\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\left[
+	\begin{matrix}
+	\left<\bm{0}\right>\\
+	\vdots\\
+	\left<\bm{h}^{(t)}\right>
+	\end{matrix}\right]
+	\end{matrix}\right]\\
+	&= \left[
+	\begin{matrix}
+	\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)_{*1} \cdot \left<\bm{h}^{(t)}\right>\\
+	\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)_{*2} \cdot \left<\bm{h}^{(t)}\right>\\
+	\vdots\\
+	\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)_{*V} \cdot \left<\bm{h}^{(t)}\right>
+	\end{matrix}\right]\\
+	&= \left\{\bm{h}^{(t)}\right\}\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right).
+	\end{align*}
+	
+	\begin{equation*}
+		\frac{\partial\left\{\bm{\theta}^{(t)}\right\}}{\partial\left<\bm{h}^{(t)}\right>} = \left[\bm{U}\right],
+	\end{equation*}
+	
+	\begin{equation*}
+		\frac{\partial\left\{\bm{h}^{(t)}\right\}}{\partial\left<\bm{z}^{(t)}\right>} = \mathrm{diag}\left(\left<\bm{h}^{(t)}\right>\odot\left(\left<\bm{1}\right>-\left<\bm{h}^{(t)}\right>\right)\right).
+	\end{equation*}
+	
+	\begin{equation*}
+		\frac{\partial\left\{\bm{z}^{(t)}\right\}}{\partial\left<\bm{e}^{(t)}\right>} = \left[\bm{W}_e\right].
+	\end{equation*}
+	\noindent Therefore,
+	
+	\begin{align*}
+		\frac{\partial J^{(t)}}{\partial\left<\bm{e}^{(t)}\right>} &= \frac{\partial J^{(t)}}{\partial\left<\bm{\theta}^{(t)}\right>}\frac{\partial\left\{\bm{\theta}^{(t)}\right\}}{\partial\left<\bm{h}^{(t)}\right>}\frac{\partial\left\{\bm{h}^{(t)}\right\}}{\partial\left<\bm{z}^{(t)}\right>}\frac{\partial\left\{\bm{z}^{(t)}\right\}}{\partial\left<\bm{e}^{(t)}\right>}\\
+		&= \left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\left[\bm{U}\right]\mathrm{diag}\left(\left<\bm{h}^{(t)}\right>\odot\left(\left<\bm{1}\right>-\left<\bm{h}^{(t)}\right>\right)\right)\left[\bm{W}_e\right].
+	\end{align*}
+	
+	\begin{equation*}
+		\frac{\partial J^{(t)}}{\partial\left\{\bm{e}^{(t)}\right\}} = \left[\bm{W}_e\right]^\mathsf{T}\mathrm{diag}\left(\left(\left\{\bm{1}\right\}-\left\{\bm{h}^{(t)}\right\}\right)\odot\left\{\bm{h}^{(t)}\right\}\right)\left[\bm{U}\right]^\mathsf{T}\left(\left\{\bm{\hat{y}}^{(t)}\right\}-\left\{\bm{y}^{(t)}\right\}\right).
+	\end{equation*}
+	
+	\begin{align*}
+		\frac{\partial\left\{\bm{z}^{(t)}\right\}}{\partial\left[\bm{W}_e\right]}
+		&= \left[
+		\begin{matrix}
+		\left[
+		\begin{matrix}
+		\frac{\partial z_1}{\partial\left<\bm{W}_{e,1*}\right>}\\
+		\vdots\\
+		\frac{\partial z_1}{\partial\left<\bm{W}_{e,D_h*}\right>}
+		\end{matrix}\right]\\
+		\left[
+		\begin{matrix}
+		\frac{\partial z_2}{\partial\left<\bm{W}_{e,1*}\right>}\\
+		\vdots\\
+		\frac{\partial z_2}{\partial\left<\bm{W}_{e,D_h*}\right>}
+		\end{matrix}\right]\\
+		\vdots\\
+		\left[
+		\begin{matrix}
+		\frac{\partial z_{D_h}}{\partial\left<\bm{W}_{e,1*}\right>}\\
+		\vdots\\
+		\frac{\partial z_{D_h}}{\partial\left<\bm{W}_{e,D_h*}\right>}
+		\end{matrix}\right]
+		\end{matrix}\right]\\
+		&= \left[
+		\begin{matrix}
+		\left[
+		\begin{matrix}
+		\left<\bm{e}^{(t)}\right>\\
+		\left<\bm{0}\right>\\
+		\vdots\\
+		\left<\bm{0}\right>
+		\end{matrix}\right]\\
+		\left[
+		\begin{matrix}
+		\left<\bm{0}\right>\\
+		\left<\bm{e}^{(t)}\right>\\
+		\vdots\\
+		\left<\bm{0}\right>
+		\end{matrix}\right]\\
+		\vdots\\
+		\left[
+		\begin{matrix}
+		\left<\bm{0}\right>\\
+		\vdots\\
+		\left<\bm{e}^{(t)}\right>
+		\end{matrix}\right]
+		\end{matrix}\right].
+	\end{align*}
+	
+	\begin{align*}
+		\frac{\partial J^{(t)}}{\partial\left[\bm{W}_e\right]}\bigg\rvert_t &= \frac{\partial J^{(t)}}{\partial\left<\bm{\theta}^{(t)}\right>}\frac{\partial\left\{\bm{\theta}^{(t)}\right\}}{\partial\left<\bm{h}^{(t)}\right>}\frac{\partial\left\{\bm{h}^{(t)}\right\}}{\partial\left<\bm{z}^{(t)}\right>}\frac{\partial\left\{\bm{z}^{(t)}\right\}}{\partial\left[\bm{W}_e\right]}\\
+		&= \left(\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\left[\bm{U}\right]\odot\left<\bm{h}^{(t)}\right>\odot\left(\left<\bm{1}\right>-\left<\bm{h}^{(t)}\right>\right)\right)^\mathsf{T}\otimes\left<\bm{e}^{(t)}\right>.
+	\end{align*}
+	
+	Similarly,
+	
+	\begin{equation*}
+		\frac{\partial J^{(t)}}{\partial\left[\bm{W}_h\right]}\bigg\rvert_t = \left(\left(\left<\bm{\hat{y}^{(t)}\right>}-\left<\bm{y}^{(t)}\right>\right)\left[\bm{U}\right]\odot\left<\bm{h}^{(t)}\right>\odot\left(\left<\bm{1}\right>-\left<\bm{h}^{(t)}\right>\right)\right)^\mathsf{T}\otimes\left<\bm{h}^{(t-1)}\right>.
+	\end{equation*}
+	
+	\begin{equation*}
+	\frac{\partial J^{(t)}}{\partial\left\{\bm{h}^{(t-1)}\right\}} = \left[\bm{W}_h\right]^\mathsf{T}\mathrm{diag}\left(\left(\left\{\bm{1}\right\}-\left\{\bm{h}^{(t)}\right\}\right)\odot\left\{\bm{h}^{(t)}\right\}\right)\left[\bm{U}\right]^\mathsf{T}\left(\left\{\bm{\hat{y}}^{(t)}\right\}-\left\{\bm{y}^{(t)}\right\}\right).
+	\end{equation*}
+
+3. c
+\begin{align*}
+	\frac{\partial J^{(t)}}{\partial\left<\bm{e}^{(t-1)}\right>} &= \frac{\partial J^{(t)}}{\partial\left<\bm{h}^{(t-1)}\right>}\frac{\partial\left\{\bm{h}^{(t-1)}\right\}}{\partial\left<\bm{z}^{(t-1)}\right>}\frac{\partial\left\{\bm{z}^{(t-1)}\right\}}{\partial\left<\bm{e}^{(t-1)}\right>}\\
+	&= \left<\bm{\gamma}^{(t-1)}\right>  \mathrm{diag}\left(\left<\bm{h}^{(t-1)}\right>\odot\left(\left<\bm{1}\right>-\left<\bm{h}^{(t-1)}\right>\right)\right) \left[\bm{W}_e\right].
+\end{align*}
+
+\begin{align*}
+	\frac{\partial J^{(t)}}{\partial\left[\bm{W}_e\right]}\bigg\rvert_{t-1} &= \frac{\partial J^{(t)}}{\partial\left<\bm{h}^{(t-1)}\right>}\frac{\partial\left\{\bm{h}^{(t-1)}\right\}}{\partial\left<\bm{z}^{(t-1)}\right>}\frac{\partial\left\{\bm{z}^{(t-1)}\right\}}{\partial\left[\bm{W}_e\right]}\\
+	&= \left(\left<\bm{\gamma}^{(t-1)}\right>\odot\left<\bm{h}^{(t-1)}\right>\odot\left(\left<\bm{1}\right>-\left<\bm{h}^{(t-1)}\right>\right)\right)^\mathsf{T}\otimes\left<\bm{e}^{(t-1)}\right>.
+\end{align*}
+
+\begin{equation*}
+	\frac{\partial J^{(t)}}{\partial\left[\bm{W}_h\right]}\bigg\rvert_{t-1} = \left(\left<\bm{\gamma}^{(t-1)}\right>\odot\left<\bm{h}^{(t-1)}\right>\odot\left(\left<\bm{1}\right>-\left<\bm{h}^{(t-1)}\right>\right)\right)^\mathsf{T}\otimes\left<\bm{h}^{(t-2)}\right>.
+\end{equation*}
+
+3. d $\mathsf{O}\left(\left|V\right|D_h + dD_h + D_h^2\right)$.
+
+3. e $\mathsf{O}\left(T\left(\left|V\right|D_h + dD_h + D_h^2\right)\right)$.
+
+3. f $\mathsf{O}\left(\left|V\right|D_h\right)$ would be the dominant part.
 \end{document}
